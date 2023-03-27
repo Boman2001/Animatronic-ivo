@@ -1,7 +1,11 @@
 #include <Servo.h>
 #include <Wire.h>
+#include <MFRC522.h>
+#include <SPI.h>
 
-byte i2c_rcv;  // data received from I2C bus
+#define SS_PIN 10
+#define RST_PIN 9
+MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance.
 Servo servoUpDown;
 Servo servoLeftRight;
 Servo servoBlink;
@@ -19,12 +23,10 @@ int mouthOpen = 70;
 int switchState = 1;
 
 void setup() {
-  Wire.begin(8);  // join I2C bus as Slave with address 0x08
-
-  // event handler initializations
-  Wire.onReceive(dataRcv);  // register an event handler for received data
-  // initialize global variables
-  i2c_rcv = 255;
+  Serial.begin(9600);   // Initiate a serial communication
+  SPI.begin();      // Initiate  SPI bus
+  mfrc522.PCD_Init();   // Initiate MFRC522
+  Serial.println("Btest");
   servoUpDown.attach(2);
   servoLeftRight.attach(3);
   servoBlink.attach(4);
@@ -33,16 +35,45 @@ void setup() {
   servoLeftRight.write(maxRight + maxLeft / 2);
   servoBlink.write(lidsOpen);
   servoMouth.write(mouthClosed);
-  Serial.println("aaaaa");
+  Serial.println("test");
 }
 
 void loop() {
-  Serial.begin(9600);
-  dataRcv(8);
-  // if () {
-  //   Blink();
-  //     delay(150);
-  // }
+  // Look for new cards
+  if (!mfrc522.PICC_IsNewCardPresent()) {
+    return;
+  }
+  // Select one of the cards
+  if (!mfrc522.PICC_ReadCardSerial()) {
+    return;
+  }
+  Serial.print("UID tag :");
+  String content = "";
+  byte letter;
+  for (byte i = 0; i < mfrc522.uid.size; i++) {
+    Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
+    Serial.print(mfrc522.uid.uidByte[i], HEX);
+    content.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
+    content.concat(String(mfrc522.uid.uidByte[i], HEX));
+  }
+    Serial.println("aaaa" + content.substring(1));
+// switch(content.substring(1){
+//   case "e3 51 66 2e":
+//   Blink();
+//   break;
+//   case "04 06 f7 7e df 61 80":
+//   break;  
+// }
+
+  if(content.substring(1) == "e3 51 66 2e"){
+    Serial.println("on");
+     Blink();
+  }
+  
+  if(content.substring(1) == "04 06 f7 7e df 61 80"){
+  Serial.println("off"); 
+      Blink();
+  }
 }
 
 //received data handler function
@@ -58,4 +89,5 @@ void Blink() {
   servoBlink.write(lidsClosed);
   delay(200);
   servoBlink.write(lidsOpen);
+  delay(400);
 }
