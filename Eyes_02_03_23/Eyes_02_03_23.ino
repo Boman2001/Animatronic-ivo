@@ -39,6 +39,10 @@ void setup() {
 }
 
 void loop() {
+
+    if(random(140) == 69) {
+    Look();
+  }
   // Look for new cards
   if (!mfrc522.PICC_IsNewCardPresent()) {
     return;
@@ -72,7 +76,7 @@ void loop() {
   
   if(content.substring(1) == "04 06 f7 7e df 61 80"){
   Serial.println("off"); 
-      Blink();
+      Clack();
   }
 }
 
@@ -90,4 +94,19 @@ void Blink() {
   delay(200);
   servoBlink.write(lidsOpen);
   delay(400);
+}
+
+void Clack() {
+  servoMouth.write(mouthOpen);
+  delay(200);
+  servoMouth.write(mouthClosed);
+  delay(400);
+}
+
+void Look(){
+   servoLeftRight.write(maxLeft);
+   delay(200);
+   servoLeftRight.write(maxRight);
+   delay(200);
+  servoLeftRight.write(maxRight + maxLeft / 2);
 }
