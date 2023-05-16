@@ -6,6 +6,7 @@ Servo servoLeft;
 
 void setup() 
 {
+  Serial.begin(9600);
   servoRotate.attach(2);
   servoLeft.attach(3);
   servoRight.attach(4);
@@ -20,18 +21,27 @@ void loop()
   // servoRotate.write(90-
   if(random(30000) == 69) {
     look();
-  }else if(random(30000) == 70){
+  }
+  else if(random(30000) == 70){
     nod();
   }
-  
 }
 
 void look(){
-   servoRotate.write(90+15);
+    for (int pos = 90; pos <= 90+15; pos += 1) {  // smoothly open the servo in steps of 10
+    servoRotate.write(pos);  // set the servo position
+    delay(20);           // wait for the servo to move to the new position
+  }
   delay(800);
-  servoRotate.write(90-15);
+      for (int pos = 90+15; pos <= 90-15; pos -= 1) {  // smoothly open the servo in steps of 10
+    servoRotate.write(pos);  // set the servo position
+    delay(20);           // wait for the servo to move to the new position
+  }
   delay(800);
-    servoRotate.write(90);
+  for (int pos = 90-15; pos <= 90; pos += 1) {  // smoothly open the servo in steps of 10
+    servoRotate.write(pos);  // set the servo position
+    delay(20);           // wait for the servo to move to the new position
+  }
 }
 void nod(){
   servoLeft.write(15);
