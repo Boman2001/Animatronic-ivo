@@ -21,23 +21,36 @@ static int8_t Send_buf[8] = { 0 };  //-> Buffer to send commands.
 static uint8_t ansbuf[10] = { 0 };  //-> Buffer to receive response.
 
 void setup() {
-  Serial.begin(9600);  // Initiate a serial communication
+
+  // Initiate a serial communication
+  Serial.begin(9600);
+
+  // Setup mp3
   mp3.begin(9600);
-  delay(500); // wait for the module to start up
-  SPI.begin();      // Initiate  SPI bus
-  mfrc522.PCD_Init();   // Initiate MFRC522
+  delay(500);
+
+  // Initiate SPI bus
+  SPI.begin();
+
+  // Initiate MFRC522
+  mfrc522.PCD_Init();
   Wire.begin();
-  delay(500);          // wait for the module to start up
+
+  // Wait for the module to start up
+  delay(500);
   sendMp3Command(CMD_SEL_DEV, 0, DEV_TF);
   delay(500);
-  Serial.println("[EM Controller]: Setup complete");
+
+  mfrc522.PCD_DumpVersionToSerial();
+  Serial.println("[BrainController]: Setup complete");
+
+  sendMp3Command(CMD_PLAY_FOLDER_FILE, 0x01, 0x01);
 }
 
 void loop() {
 
   // Look for new cards
   if (!mfrc522.PICC_IsNewCardPresent()) {
-    Serial.println("NO CARD");
     return;
   }
 
@@ -56,34 +69,22 @@ void loop() {
     }
   }
 
-  Serial.println("[EM Controller]: Detected nfc card: " + nfcCardId);
+  Serial.println("[BrainController]: Detected nfc card: " + nfcCardId);
 
   if (nfcCardId == "0xe3 0x51 0x66 0x2e") {
-    Serial.println("[EM Controller]: Starting blink routine...");
-    sendMp3Command(CMD_PLAY_FOLDER_FILE, 0x01, 0x01);
-    startTheRest();
-    // delay(182000);
-    stopTheRest();
-  } else if (nfcCardId == "0x04 0x33 0x43 0x6c 0xdf 0x61 0x80") {
-    Serial.println("[EM Controller]: Starting clack routine...");
+    Serial.println("[BrainController]: Starting blink routine...");
     sendMp3Command(CMD_PLAY_FOLDER_FILE, 0x01, 0x01);
     startTheRest();
     // delay(182000);
     stopTheRest();
   }
-}
-
-//received data handler function
-void dataRcv(int numBytes) {
-  while (1 < Wire.available()) {
-    // loop through all but the last
-    int c = Wire.read();  // receive byte as a character
-    Serial.print(c);      // print the character
+  else if (nfcCardId == "0x04 0x33 0x43 0x6c 0xdf 0x61 0x80") {
+    Serial.println("[BrainController]: Starting clack routine...");
+    sendMp3Command(CMD_PLAY_FOLDER_FILE, 0x01, 0x01);
+    startTheRest();
+    // delay(182000);
+    stopTheRest();
   }
-}
-
-void sendCommand(byte command) {
-  sendMp3Command(command, 0, 0);
 }
 
 void sendMp3Command(byte command, byte dat1, byte dat2) {
