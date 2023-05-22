@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include <MFRC522.h>
 #include <SPI.h>
+#include <MD_YX5300.h>
 
 #define SS_PIN 10
 #define RST_PIN 9
@@ -14,7 +15,7 @@
 
 #include <SoftwareSerial.h>
 
-SoftwareSerial mp3(5, 6);          // RX, TX
+SoftwareSerial mp3(5, 4);          // RX, TX
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance.
 
 static int8_t Send_buf[8] = { 0 };  //-> Buffer to send commands.

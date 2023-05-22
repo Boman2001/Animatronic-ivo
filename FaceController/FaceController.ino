@@ -22,11 +22,12 @@ int minEyeLidsPos = 0;
 int maxEyeLidsPos = 45;
 
 int minMouthPos = 0;
-int maxMouthPos = 20; //35
+int maxMouthPos = 35;
 
-//
+// Params
 bool enabled = true;
 int previousMouthVal = 0;
+int audioAnalogPinSensitivity = 25;
 
 
 void setup() {
@@ -54,44 +55,64 @@ void setup() {
 void loop() {
 
   int val = analogRead(audioAnalogPin);
+  val -= 15;
 
   //TODO: Keep an array of 5 previous values to check if all 5 are 0.
   //Then we'll know if the bot should return to the idle routine.
 
-  if (enabled && (previousMouthVal > 0 || val > 0)) {
+  // Serial.println("VAL: " + String(val));
+  // Serial.println("PVAL: " + String(previousMouthVal));
+  // Serial.println("");
+
+  if (enabled && val > 15 && (previousMouthVal > 0 || val > 0)) {
+
     Serial.println(val);
-    setPosSmooth(setMouthPos, previousMouthVal, val, 300, 25);
+    // setMouthPos(val); <---- PLAN B, uncomment two lines and comment the next line
+    // delay(75);
+    setPosSmooth(setMouthPos, previousMouthVal, val, 100, 250); //CHANGE THESE TWO VALUES: first one determines how long it takes for the mouth to open, the next one is the amount of steps it takes
     previousMouthVal = val;
     return;
   }
 
-  Serial.println("[FaceController]: Rolling the dice...");
-  int diceRoll = random(10);
+  setMouthPos(0);
+  delay(75);
+  
+  // delay(1000);
+}
 
-  switch(diceRoll) {
+void performAudioMouthMovement() {
 
-    case 3:
-      Serial.println("[FaceController]: Starting blink routine");
-      blink();
-      break;
 
-    case 5:
-      Serial.println("[FaceController]: Starting horizontalEyeScan routine");
-      horizontalEyeScan();
-      break;
+}
 
-    case 7:
-      Serial.println("[FaceController]: Starting verticalEyeScan routine");
-      verticalEyeScan();
-      break;
+//
+void performIdle() {
 
-    case 9:
-      Serial.println("[FaceController]: Starting chew routine");
-      chew();
-      break;
-  }
+  // Serial.println("[FaceController]: Rolling the dice...");
+  // int diceRoll = random(10);
 
-  delay(1000);
+  // switch(diceRoll) {
+
+  //   case 3:
+  //     Serial.println("[FaceController]: Starting blink routine");
+  //     blink();
+  //     break;
+
+  //   case 5:
+  //     Serial.println("[FaceController]: Starting horizontalEyeScan routine");
+  //     horizontalEyeScan();
+  //     break;
+
+  //   case 7:
+  //     Serial.println("[FaceController]: Starting verticalEyeScan routine");
+  //     verticalEyeScan();
+  //     break;
+
+  //   case 9:
+  //     Serial.println("[FaceController]: Starting chew routine");
+  //     chew();
+  //     break;
+  // }
 }
 
 // Brain Connection
