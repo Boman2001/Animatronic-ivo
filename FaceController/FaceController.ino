@@ -54,6 +54,17 @@ void setup() {
 
 void loop() {
 
+  // OPTION A: IDLE
+  //performIdle();
+  //delay(1000);
+
+  // OPTION B: MOUTH MOVEMENT
+  performMouthMove();
+  delay(75);
+}
+
+void performMouthMove() {
+
   int val = analogRead(audioAnalogPin);
   val -= 15;
 
@@ -67,52 +78,43 @@ void loop() {
   if (enabled && val > 15 && (previousMouthVal > 0 || val > 0)) {
 
     Serial.println(val);
+
     // setMouthPos(val); <---- PLAN B, uncomment two lines and comment the next line
-    // delay(75);
     setPosSmooth(setMouthPos, previousMouthVal, val, 100, 250); //CHANGE THESE TWO VALUES: first one determines how long it takes for the mouth to open, the next one is the amount of steps it takes
     previousMouthVal = val;
     return;
   }
 
   setMouthPos(0);
-  delay(75);
-  
-  // delay(1000);
-}
-
-void performAudioMouthMovement() {
-
-
 }
 
 //
 void performIdle() {
+  Serial.println("[FaceController]: Rolling the dice...");
+  int diceRoll = random(10);
 
-  // Serial.println("[FaceController]: Rolling the dice...");
-  // int diceRoll = random(10);
+  switch(diceRoll) {
 
-  // switch(diceRoll) {
+    case 3:
+      Serial.println("[FaceController]: Starting blink routine");
+      blink();
+      break;
 
-  //   case 3:
-  //     Serial.println("[FaceController]: Starting blink routine");
-  //     blink();
-  //     break;
+    case 5:
+      Serial.println("[FaceController]: Starting horizontalEyeScan routine");
+      horizontalEyeScan();
+      break;
 
-  //   case 5:
-  //     Serial.println("[FaceController]: Starting horizontalEyeScan routine");
-  //     horizontalEyeScan();
-  //     break;
+    case 7:
+      Serial.println("[FaceController]: Starting verticalEyeScan routine");
+      verticalEyeScan();
+      break;
 
-  //   case 7:
-  //     Serial.println("[FaceController]: Starting verticalEyeScan routine");
-  //     verticalEyeScan();
-  //     break;
-
-  //   case 9:
-  //     Serial.println("[FaceController]: Starting chew routine");
-  //     chew();
-  //     break;
-  // }
+    case 9:
+      Serial.println("[FaceController]: Starting chew routine");
+      chew();
+      break;
+  }
 }
 
 // Brain Connection
