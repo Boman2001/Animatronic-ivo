@@ -57,9 +57,11 @@ void receiveEvent(int bytes) {
 }
 
 // Movement Functions
-void setNeckVertPos(int percentage) {
-    servoVerticalLeft.write(constrain(map(percentage, 0, 100, minVerticalLeftPos, maxVerticalLeftPos), minVerticalLeftPos, maxVerticalLeftPos));
-    servoVerticalRight.write(constrain(map(percentage, 0, 100, minVerticalRightPos, maxVerticalRightPos), minVerticalRightPos, maxVerticalRightPos));
+
+//@FIXME: Broken function
+void setNeckVerticalPos(int percentage) {
+  servoVerticalLeft.write(constrain(map(percentage, 0, 100, minVerticalLeftPos, maxVerticalLeftPos), minVerticalLeftPos, maxVerticalLeftPos));
+  servoVerticalRight.write(constrain(map(percentage, 0, 100, minVerticalRightPos, maxVerticalRightPos), minVerticalRightPos, maxVerticalRightPos));
 }
 
 void setPosSmooth(void (*driver)(int percentage), int startPercentage, int endPercentage, int duration, int steps) {
