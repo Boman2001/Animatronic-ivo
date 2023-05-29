@@ -32,7 +32,7 @@ bool enabled = true;
 
 
 void setup() {
-      verticalEyeScan();
+  verticalEyeScan();
 
   // Initiate a serial communication
   Serial.begin(9600);
@@ -66,7 +66,6 @@ void setup() {
   // setNeckHorizontalPos(100);
 
   RotateNeck();
-
 }
 
 void loop() {
@@ -100,13 +99,16 @@ void performIdle() {
       break;
 
     case 8:
-          Serial.println("[FaceController]: Starting horizontalNeck routine");
-      setPosSmooth(setNeckVerticalPos, 0, 100, 1000, 250);
-      setPosSmooth(setNeckVerticalPos, 100, 0, 1000, 250);
+      Serial.println("[FaceController]: Starting horizontalNeck routine");
+      setPosSmooth(setNeckVerticalPos, 20, 100, 1000, 250);
+      setPosSmooth(setNeckVerticalPos, 100, 20, 1000, 250);
+      // setPosSmooth(setNeckVerticalPos, deze, 100, 1000, 250);
+      // setPosSmooth(setNeckVerticalPos, 100, deze , 1000, 250);
+      // op de plekken waar deze staat in de niet uit gecommente code zal je de aanpassingen moeten maken voor de max uitslag
       break;
-    
+
     case 9:
-          Serial.println("[FaceController]: Starting rotateNeck routine");
+      Serial.println("[FaceController]: Starting rotateNeck routine");
       RotateNeck();
       break;
   }
@@ -161,11 +163,10 @@ void verticalEyeScan() {
   setPosSmooth(setEyeVerticalPos, 0, 50, 1000, 100);
 }
 
-void RotateNeck(){
-      setPosSmooth(setNeckHorizontalPos, 50, 0, 1500, 500);
-      setPosSmooth(setNeckHorizontalPos, 0, 100, 1500, 500);
-      setPosSmooth(setNeckHorizontalPos, 100, 50, 1500, 500);
-
+void RotateNeck() {
+  setPosSmooth(setNeckHorizontalPos, 50, 0, 1500, 500);
+  setPosSmooth(setNeckHorizontalPos, 0, 100, 1500, 500);
+  setPosSmooth(setNeckHorizontalPos, 100, 50, 1500, 500);
 }
 
 void blink() {
